@@ -1,5 +1,6 @@
 class Irc
 	@@connections = {}
+	def self.connections; @@connections; end
 	def self.each; @@connections.each {|name,connection| yield name,connection} end
 	def self.[] name; @@connections[name]; end
 	attr_accessor :server, :nick, :channels
@@ -8,6 +9,7 @@ class Irc
 		@server = server
 		@nick = nick
 		@channels = channels
+		@callbacks = callbacks
 		@settings = {
 			:address => @server,
 			:username => @nick,
@@ -15,19 +17,22 @@ class Irc
 			:nicknames => [@nick],
 			:server_password => passwd
 		}
+		@@connections[server] = self
+		connect
+	end
+	def connect
 		@irc = Net::YAIL.new @settings
 		@irc.prepend_handler :incoming_welcome, proc {|text,args|
 			@channels.each {|channel| @irc.join channel }
 			return false
 		}
-		callbacks.each do |event,callback|
+		@callbacks.each do |event,callback|
 			@irc.prepend_handler event, callback
 		end
 		@irc.start_listening
-		@@connections[server] = self
 	end
 	def quit *args
-		@@connections.delete self
+		@@connections.delete @server
 		@irc.quit *args
 	end
 	def method_missing meth, *args

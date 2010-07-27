@@ -106,7 +106,7 @@ Command.new({ :names => ["connect","c"], :usage => "<server> <nick>[:passwd] <ch
 		:incoming_namreply => Proc.new{|text,args|
 			text =~ /^(@|\*|=) (\S+) :?(.+)$/
 			type,channel,users = $1,$2,$3
-			send $forward, "users in #{channel}: #{users}"
+			send $forward, "users in #{server}@#{channel}: #{users}"
 		}
 	})
 	"target is now #{$irc.server}@#{$channel}"

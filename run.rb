@@ -103,7 +103,11 @@ $xmpp_main = Proc.new{
 		elsif authorized? from
 			parts = msg.body.split
 			msg.body = parts.join(' ')
-			$irc.msg $channel, msg.body
+			if $irc.dead_socket
+				send $master, "sorry but the connection to #{$irc.server} is dead"
+			else
+				$irc.msg $channel, msg.body
+			end
 
 		# for public
 		else
@@ -121,8 +125,7 @@ $irc_main = Proc.new{
 		next unless now - ($last_dead[connection]||now-30) >= 30
 		$last_dead[connection] = now
 		send $master, "#{now} lost irc connection to #{server} trying to reconnect"
-		connection.stop_listening
-		connection.start_listening
+		connection.connect
 	end
 }
 
