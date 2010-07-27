@@ -92,9 +92,9 @@ Command.new({ :names => ["connect","c"], :usage => "<server> <nick>[:passwd] <ch
 	$channel = channels.first
 	$irc = Irc.new(server,nick,passwd,channels,{
 		:incoming_msg => Proc.new{|fullactor,actor,target,text|
-			from = actor
-			from += " @ #{target}" if target != $channel
-			send $forward, "#{from} > #{text}" unless $forward.nil?
+			user = actor
+			user += "@#{target}" if target != $channel
+			send $forward, "#{user} > #{text}" unless $forward.nil?
 		},
 		:incoming_namreply => Proc.new{|text,args|
 			text =~ /^(@|\*|=) (\S+) :?(.+)$/
