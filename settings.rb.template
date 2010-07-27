@@ -1,0 +1,4 @@
+$master = "<your bot administrator jabber id>"
+$login  = "<your bot jabber id>"
+$passwd = "<your bot password>"
+$status = "<your bot status line>"
