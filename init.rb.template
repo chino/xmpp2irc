@@ -1,0 +1,6 @@
+## you can put any commands in here your like
+## the run method is provided to make it easier to fake commands
+## run <command> <args>
+
+## this example connects to irc.freenode.net at startup as guest
+run "connect", "irc.freenode.net guest #forsaken #6dof"

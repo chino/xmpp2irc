@@ -87,7 +87,6 @@ Command.new({ :names => ["message","xm"], :usage => "Send a xmpp message: <targe
 	send target, message
 	nil
 end
-# TODO: how do i see the results?
 Command.new({ :names => ["names","n"], :usage => "Get list of user names for a channel: <channel>", :secure =>true }) do |from,message|
 	parts = message.split
 	command = parts.shift
