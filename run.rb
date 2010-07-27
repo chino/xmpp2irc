@@ -27,7 +27,7 @@ $forward = $master  # target jabber id for messages
 
 def authorized? name
 	$master_regex ||= /^#{$master.gsub('.','\.')}(\/.*)?$/
-	name =~ $master_regex
+	name.to_s =~ $master_regex
 end
 
 begin
@@ -75,30 +75,29 @@ $xmpp_main = Proc.new{
 	# handle incoming messages
 	$im.received_messages{|msg|
 		next unless msg.type == :chat
-		from = msg.from.to_s
 
 		# forward any received messages to the master for visibility
-		to = (from =~ /#{$login}/) ? "" : " to #{msg.to}"
-		info = "#{from} #{to} > #{msg.body}"
-		authorized?(from) ? puts(info) : send($master, info)
+		to = (msg.from.to_s =~ /#{$login}/) ? "" : " to #{msg.to}"
+		info = "#{msg.from.to_s} #{to} > #{msg.body}"
+		authorized?(msg.from) ? puts(info) : send($master, info)
 
 		# subscribe to anyone who messages us
-		$im.add from unless $im.subscribed_to?(from)
+		$im.add msg.from unless $im.subscribed_to?(msg.from)
 
 		# run command
 		name = msg.body.split.first.delete('/')
 		if command = Command[name]
-			if command.secure and not authorized? from
-				send from, "#{from} is not authorized to run #{command.name}"
+			if command.secure and not authorized? msg.from
+				send msg.from, "#{msg.from} is not authorized to run #{command.name}"
 			else
-				response = command.call from, msg.body
+				response = command.call msg.from, msg.body
 				if response.respond_to? :empty? and not response.empty?
-					send from, response
+					send msg.from, response
 				end
 			end
 
 		# for the master send unknown text to default irc channel
-		elsif authorized? from
+		elsif authorized? msg.from
 			parts = msg.body.split
 			msg.body = parts.join(' ')
 			if $irc.dead_socket
@@ -109,7 +108,7 @@ $xmpp_main = Proc.new{
 
 		# for public
 		else
-			send from, "unknown command"
+			send msg.from, "unknown command"
 		end
 	}
 
