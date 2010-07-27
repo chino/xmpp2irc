@@ -3,7 +3,7 @@ Command.new({ :names => ["help","h"], :usage =>  "This help message"}) do |from,
 	if name
 		if command = Command[name]
 			if command.secure and authorized? from
-				return "#{name}: #{Command[name][:usage]}"
+				next "#{name}: #{Command[name].usage}"
 			end
 		end
 		"unknown command"
@@ -15,7 +15,7 @@ Command.new({ :names => ["help","h"], :usage =>  "This help message"}) do |from,
 		"commands: #{names.join('; ')}"
 	end
 end
-Command.new({ :names => ["ping","p"], :usage => "Ping test"}) do |from,message|
+Command.new({ :names => ["ping"], :usage => "Ping test"}) do |from,message|
 	"Pong"
 end
 Command.new({ :names => ["authorized?"], :usage => "Check if your authorization", :secure =>true }) do |from,message|
