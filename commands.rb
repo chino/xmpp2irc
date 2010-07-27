@@ -59,7 +59,7 @@ Command.new({ :names => ["part","p"], :usage => "<channel> - Leave a channel", :
 	$channel = $irc.channels.first
 	"parted #{channel} target is now #{$channel}"
 end
-Command.new({ :names => ["privmsg","m"], :usage => "<target> <message> - Send an irc message; If <target> is * then message is broadcasted to all channels", :secure =>true }) do |from,message|
+Command.new({ :names => ["privmsg","m"], :usage => "<target|*> <message> - Send an irc message", :secure =>true }) do |from,message|
 	parts = message.split
 	command = parts.shift
 	target = parts.shift
@@ -83,11 +83,19 @@ Command.new({ :names => ["message","xm"], :usage => "<target> <message> - Send a
 	send target, message
 	nil
 end
-Command.new({ :names => ["names","n"], :usage => "<channel> - Get list of user names for a channel", :secure =>true }) do |from,message|
+Command.new({ :names => ["names","n"], :usage => "[channel|*] - Get list of user names for a channel.", :secure =>true }) do |from,message|
 	parts = message.split
 	command = parts.shift
 	channel = parts.shift || $channel
-	$irc.names channel
+	if channel == '*'
+		Irc.each do |server,connection|
+			connection.channels.each do |channel|
+				connection.names channel
+			end
+		end
+	else
+		$irc.names channel
+	end
 	"requested name list for #{channel}"
 end
 Command.new({ :names => ["connect","c"], :usage => "<server> <nick>[:passwd] <channels> - Connect to an irc server (specify only <server> to set it as the target if already connected)", :secure => true }) do |from,message|
