@@ -7,7 +7,8 @@ Synopsis:
 Why:
 	I needed a way to access irc from gmail and my cell phone (which
 	has a very reliable gtalk client).  Also could be used to run 
-	commands on your remote machine via jabber.
+	commands on your remote machine via jabber.  And anything else
+	you would want to do with a jabber bot.
 
 Setup:
 	Copy the *.template files to their basename and edit them.
