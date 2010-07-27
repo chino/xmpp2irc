@@ -59,12 +59,20 @@ Command.new({ :names => ["part","p"], :usage => "<channel> - Leave a channel", :
 	$channel = $irc.channels.first
 	"parted #{channel} target is now #{$channel}"
 end
-Command.new({ :names => ["privmsg","m"], :usage => "<target> <message> - Send an irc message", :secure =>true }) do |from,message|
+Command.new({ :names => ["privmsg","m"], :usage => "<target> <message> - Send an irc message; If <target> is * then message is broadcasted to all channels", :secure =>true }) do |from,message|
 	parts = message.split
 	command = parts.shift
 	target = parts.shift
 	message = parts.join(' ')
-	$irc.msg target, message
+	if target == '*'
+		Irc.each do |server,connection|
+			connection.channels.each do |channel|
+				connection.msg channel, message
+			end
+		end
+	else
+		$irc.msg target, message
+	end
 	nil
 end
 Command.new({ :names => ["message","xm"], :usage => "<target> <message> - Send a xmpp message", :secure =>true }) do |from,message|
@@ -120,5 +128,8 @@ Command.new({ :names => ["info","i"], :usage => "List irc servers and channels",
 	Irc.each do |name,connection|
 		lists << "#{name} @ { #{connection.channels.join(', ')} }"
 	end
-	lists.join('; ')
+	lists.join(' ')
+end
+Command.new({ :names => ["target","t"], :usage => "Prints the current target", :server => true }) do |from,message|
+	"target is #{$irc.server}@#{$channel}"
 end
