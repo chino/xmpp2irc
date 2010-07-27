@@ -2,7 +2,11 @@ Command.new({ :names => ["help","h"], :usage =>  "This help message"}) do |from,
 	name = message.split[1]
 	if name
 		if command = Command[name]
-			if command.secure and authorized? from
+			if command.secure
+				if authorized? from
+					next "#{name}: #{Command[name].usage}"
+				end
+			else
 				next "#{name}: #{Command[name].usage}"
 			end
 		end
@@ -15,7 +19,7 @@ Command.new({ :names => ["help","h"], :usage =>  "This help message"}) do |from,
 		"commands: #{names.join('; ')}"
 	end
 end
-Command.new({ :names => ["ping"], :usage => "Ping test"}) do |from,message|
+Command.new({ :names => ["ping"], :usage => "Test responsiveness"}) do |from,message|
 	"Pong"
 end
 Command.new({ :names => ["authorized?"], :usage => "Check if your authorization", :secure =>true }) do |from,message|
@@ -29,7 +33,7 @@ Command.new({ :names => ["reload"], :usage => "Reload config", :secure =>true })
 	load 'config'
 	"config has been reloaded"
 end
-Command.new({ :names => ["forward","f"], :usage => "Control forwarding of messages: [off|all|nil=from]", :secure =>true }) do |from,message|
+Command.new({ :names => ["forward","f"], :usage => "[off|all|nil=from] - Control forwarding of messages", :secure =>true }) do |from,message|
 	parts = message.split
 	command = message.shift
 	case message.shift
@@ -44,7 +48,7 @@ Command.new({ :names => ["forward","f"], :usage => "Control forwarding of messag
 		"messages forwarding only to #{from}"
 	end
 end
-Command.new({ :names => ["join","j"], :usage => "Join a channel and set it as the default target: <channel>", :secure =>true }) do |from,message|
+Command.new({ :names => ["join","j"], :usage => "<channel> - Join a channel and set it as the default target", :secure =>true }) do |from,message|
 	parts = message.split
 	command = parts.shift
 	channel = parts.shift
@@ -53,7 +57,7 @@ Command.new({ :names => ["join","j"], :usage => "Join a channel and set it as th
 	$channel = channel
 	"joined #{channel} target is now #{$channel}"
 end
-Command.new({ :names => ["part","p"], :usage => "Leave a channel: <channel>", :secure =>true }) do |from,message|
+Command.new({ :names => ["part","p"], :usage => "<channel> - Leave a channel", :secure =>true }) do |from,message|
 	parts = message.split
 	command = parts.shift
 	channel = parts.shift
@@ -62,7 +66,7 @@ Command.new({ :names => ["part","p"], :usage => "Leave a channel: <channel>", :s
 	$channel = $channels.first
 	"parted #{channel} target is now #{$channel}"
 end
-Command.new({ :names => ["privmsg","m"], :usage => "Send an irc message: <target> <message>", :secure =>true }) do |from,message|
+Command.new({ :names => ["privmsg","m"], :usage => "<target> <message> - Send an irc message", :secure =>true }) do |from,message|
 	parts = message.split
 	command = parts.shift
 	target = parts.shift
@@ -70,7 +74,7 @@ Command.new({ :names => ["privmsg","m"], :usage => "Send an irc message: <target
 	$irc.msg target, message
 	nil
 end
-Command.new({ :names => ["message","xm"], :usage => "Send a xmpp message: <target> <message>", :secure =>true }) do |from,message|
+Command.new({ :names => ["message","xm"], :usage => "<target> <message> - Send a xmpp message", :secure =>true }) do |from,message|
 	parts = message.split
 	command = parts.shift
 	target = parts.shift
@@ -78,14 +82,14 @@ Command.new({ :names => ["message","xm"], :usage => "Send a xmpp message: <targe
 	send target, message
 	nil
 end
-Command.new({ :names => ["names","n"], :usage => "Get list of user names for a channel: <channel>", :secure =>true }) do |from,message|
+Command.new({ :names => ["names","n"], :usage => "<channel> - Get list of user names for a channel", :secure =>true }) do |from,message|
 	parts = message.split
 	command = parts.shift
 	channel = parts.shift || $channel
 	$irc.names channel
 	"requested name list for #{channel}"
 end
-Command.new({ :names => ["connect","c"], :usage => "Connect to an irc server (specify only <server> to set it as the target if already connected): <server> <nick>[:passwd] <channels>", :secure => true }) do |from,message|
+Command.new({ :names => ["connect","c"], :usage => "<server> <nick>[:passwd] <channels> - Connect to an irc server (specify only <server> to set it as the target if already connected)", :secure => true }) do |from,message|
 	parts = message.split
 	command = parts.shift
 	server = parts.shift
@@ -107,7 +111,7 @@ Command.new({ :names => ["connect","c"], :usage => "Connect to an irc server (sp
 	})
 	"target is now #{$irc.server}@#{$channel}"
 end
-Command.new({ :names => ["leave","l"], :usage => "Leave an irc server: <server>", :server => true }) do |from,message|
+Command.new({ :names => ["leave","l"], :usage => "<server> - Leave an irc server", :server => true }) do |from,message|
 	parts = message.split
 	commands = parts.shift
 	server = parts.shift 
