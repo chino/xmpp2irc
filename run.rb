@@ -46,7 +46,7 @@ $im.status :chat, $status
 $im.accept_subscriptions = true
 $im.add $master 
 
-send $master, "I woke up at #{Time.now}"
+send $master, "Started @ #{Time.now}"
 
 ## load user commands and local init file
 
