@@ -9,31 +9,22 @@ Command.new({ :names => ["help","h"], :usage =>  "This help message"}) do |from,
 		"unknown command"
 	else
 		names = []
-		def format names
-			name = names.shift
-			unless names.empty?
-				name += " aliases #{names.join(',')}"
-			end
-			name
+		Command.commands.values.uniq.each do |command|
+			names << command.to_s unless command.secure and not authorized? from
 		end
-		if authroized? from
-			Command.each {|name,command| names << format(command.names.dup) }
-		else
-			Command.each {|name,command| names << format(command.names.dup) unless command.secure }
-		end
-		"commands: #{$commands.keys.join('; ')}"
+		"commands: #{names.join('; ')}"
 	end
 end
 Command.new({ :names => ["ping","p"], :usage => "Ping test"}) do |from,message|
 	"Pong"
 end
-Command.new({ :names => ["authorized?","a"], :usage => "Check if your authorization", :secure =>true }) do |from,message|
+Command.new({ :names => ["authorized?"], :usage => "Check if your authorization", :secure =>true }) do |from,message|
 	"Yes"
 end
-Command.new({ :names => ["restart","r"], :usage => "Restart", :secure =>true }) do |from,message|
+Command.new({ :names => ["restart"], :usage => "Restart", :secure =>true }) do |from,message|
 	exec MAIN
 end
-Command.new({ :names => ["config","cf"], :usage => "Reload config", :secure =>true }) do |from,message|
+Command.new({ :names => ["reload"], :usage => "Reload config", :secure =>true }) do |from,message|
 	Command.unload
 	load 'config'
 	"config has been reloaded"

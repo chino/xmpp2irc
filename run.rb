@@ -89,8 +89,8 @@ $xmpp_main = Proc.new{
 
 		# run command
 		name = msg.body.split.first.delete('/')
-		if command = Command[command]
-			if commands.secure and not authorized? from
+		if command = Command[name]
+			if command.secure and not authorized? from
 				send from, "#{from} is not authorized to run #{command.name}"
 			else
 				response = command.call from, msg.body
