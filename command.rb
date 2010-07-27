@@ -1,6 +1,6 @@
 class Command
 	@@commands = {}
-	def self.each; @@commands.each; end
+	def self.each; @@commands.each {|name,command| yield name,command} end
 	def self.[] name; @@commands[name]; end
 	def self.unload; @@commands = {}; end
 	attr_accessor :name, :usage, :secure

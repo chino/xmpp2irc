@@ -1,6 +1,6 @@
 class Irc
 	@@connections = {}
-	def self.each; @@connections.each; end
+	def self.each; @@connections.each {|name,connection| yield name,connection} end
 	def self.[] name; @@connections[name]; end
 	attr_accessor :server, :nick, :channels
 	def initialize server, nick, passwd, channels, callbacks
