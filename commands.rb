@@ -22,16 +22,8 @@ end
 Command.new({ :names => ["ping"], :usage => "Test responsiveness"}) do |from,message|
 	"Pong"
 end
-Command.new({ :names => ["authorized?"], :usage => "Check if your authorization", :secure =>true }) do |from,message|
+Command.new({ :names => ["authorized?"], :usage => "Check if your authorized", :secure =>true }) do |from,message|
 	"Yes"
-end
-Command.new({ :names => ["restart"], :usage => "Restart", :secure =>true }) do |from,message|
-	exec MAIN
-end
-Command.new({ :names => ["reload"], :usage => "Reload config", :secure =>true }) do |from,message|
-	Command.unload
-	load 'config'
-	"config has been reloaded"
 end
 Command.new({ :names => ["forward","f"], :usage => "[off|all|nil=from] - Control forwarding of messages", :secure =>true }) do |from,message|
 	parts = message.split
@@ -121,4 +113,11 @@ Command.new({ :names => ["quit"], :usage => "<server> - Quit an irc server", :se
 	else
 		"could not find #{server}"
 	end
+end
+Command.new({ :names => ["info","i"], :usage => "List irc servers and channels", :server => true }) do |from,message|
+	lists = []
+	Irc.each do |name,connection|
+		lists << "#{name} @ { #{connection.channels.join(', ')} }"
+	end
+	lists.join('; ')
 end
