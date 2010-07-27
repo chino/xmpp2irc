@@ -27,17 +27,18 @@ Command.new({ :names => ["authorized?"], :usage => "Check if your authorized", :
 end
 Command.new({ :names => ["forward","f"], :usage => "[off|all|nil=from] - Control forwarding of messages", :secure =>true }) do |from,message|
 	parts = message.split
-	command = message.shift
-	case message.shift
+	command = parts.shift
+	arg = parts.shift
+	case arg
 	when "off"
 		$forward = nil
-		"messages forwarding turned off"
-	when "all"
+		"message forwarding turned off"
+	when "on"
 		$forward = $master
-		"messages forwarding to all resources"
+		"message forwarding to all resources"
 	else
 		$forward = from
-		"messages forwarding only to #{from}"
+		"message forwarding only to #{from}"
 	end
 end
 Command.new({ :names => ["join","j"], :usage => "<channel> - Join a channel and set it as the default target", :secure =>true }) do |from,message|
