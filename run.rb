@@ -113,7 +113,7 @@ $xmpp_main = Proc.new{
 
 }
 
-$last_dead = []
+$last_dead = {}
 $irc_main = Proc.new{
 	Irc.each do |server,connection|
 		now = Time.now

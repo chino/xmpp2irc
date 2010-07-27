@@ -52,7 +52,7 @@ Command.new({ :names => ["join","j"], :usage => "<channel> - Join a channel and 
 	parts = message.split
 	command = parts.shift
 	channel = parts.shift
-	$channels.unshift(channel).uniq!
+	$irc.channels.unshift(channel).uniq!
 	$irc.join channel
 	$channel = channel
 	"joined #{channel} target is now #{$channel}"
@@ -62,8 +62,8 @@ Command.new({ :names => ["part","p"], :usage => "<channel> - Leave a channel", :
 	command = parts.shift
 	channel = parts.shift
 	$irc.part channel
-	$channels.delete channel
-	$channel = $channels.first
+	$irc.channels.delete channel
+	$channel = $irc.channels.first
 	"parted #{channel} target is now #{$channel}"
 end
 Command.new({ :names => ["privmsg","m"], :usage => "<target> <message> - Send an irc message", :secure =>true }) do |from,message|
@@ -111,7 +111,7 @@ Command.new({ :names => ["connect","c"], :usage => "<server> <nick>[:passwd] <ch
 	})
 	"target is now #{$irc.server}@#{$channel}"
 end
-Command.new({ :names => ["leave","l"], :usage => "<server> - Leave an irc server", :server => true }) do |from,message|
+Command.new({ :names => ["quit"], :usage => "<server> - Quit an irc server", :server => true }) do |from,message|
 	parts = message.split
 	commands = parts.shift
 	server = parts.shift 
