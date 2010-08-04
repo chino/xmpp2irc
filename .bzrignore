@@ -1,2 +1,5 @@
 settings.rb
 init.rb
+init.rb.prod
+init.rb.template
+init.rb.test
