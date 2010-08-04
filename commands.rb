@@ -41,7 +41,7 @@ Command.new({ :names => ["forward","f"], :usage => "[off|all|nil=from] - Control
 		"message forwarding only to #{from}"
 	end
 end
-Command.new({ :names => ["join","j"], :usage => "<channel> - Join a channel and set it as the default target", :secure =>true }) do |from,message|
+Command.new({ :names => ["join","j"], :usage => "<channel> - Join a channel and set it as the target channel", :secure =>true }) do |from,message|
 	parts = message.split
 	command = parts.shift
 	channel = parts.shift
@@ -98,7 +98,7 @@ Command.new({ :names => ["names","n"], :usage => "[channel|*] - Get list of user
 	end
 	"requested name list for #{channel}"
 end
-Command.new({ :names => ["connect","c"], :usage => "<server> <nick>[:passwd] <channels> - Connect to an irc server (specify only <server> to set it as the target if already connected)", :secure => true }) do |from,message|
+Command.new({ :names => ["connect","c"], :usage => "<server> <nick>[:passwd] <channels> - Connect to an irc server", :secure => true }) do |from,message|
 	parts = message.split
 	command = parts.shift
 	server = parts.shift
@@ -120,7 +120,7 @@ Command.new({ :names => ["connect","c"], :usage => "<server> <nick>[:passwd] <ch
 	})
 	"target is now #{$irc.server}@#{$channel}"
 end
-Command.new({ :names => ["quit"], :usage => "<server> - Quit an irc server", :server => true }) do |from,message|
+Command.new({ :names => ["quit"], :usage => "<server> - Quit an irc server", :secure => true }) do |from,message|
 	parts = message.split
 	commands = parts.shift
 	server = parts.shift 
@@ -131,13 +131,29 @@ Command.new({ :names => ["quit"], :usage => "<server> - Quit an irc server", :se
 		"could not find #{server}"
 	end
 end
-Command.new({ :names => ["info","i"], :usage => "List irc servers and channels", :server => true }) do |from,message|
+Command.new({ :names => ["info","i"], :usage => "List irc servers and channels", :secure => true }) do |from,message|
 	lists = []
 	Irc.each do |name,connection|
 		lists << "#{name} @ { #{connection.channels.join(', ')} }"
 	end
 	lists.join(' ')
 end
-Command.new({ :names => ["target","t"], :usage => "Prints the current target", :server => true }) do |from,message|
+Command.new({ :names => ["server","s"], :usage => "Set the target server", :secure => true }) do |from,message|
+	server = message.split[1]
+	unless c = Irc.connections[server]
+		send from, "Could not find irc connection by name #{server}"
+		next
+	end
+	$irc = c
+	$channel = $irc.channels.first
 	"target is #{$irc.server}@#{$channel}"
+end
+Command.new({ :names => ["target","t"], :usage => "Prints the current target", :secure => true }) do |from,message|
+	"target is #{$irc.server}@#{$channel}"
+end
+Command.new({ :names => ["eval","e"], :usage => "eval code", :secure => true }) do |from,message|
+	parts = message.split
+	command = parts.shift
+	code = parts.join(' ')
+	eval code
 end
