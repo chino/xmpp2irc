@@ -9,6 +9,6 @@ Together with gtalk client it's one of the most stable and friendly irc clients 
 * server side connection prevents irc drops
 * custom shortcuts makes it very nice to type commands
 * run commands on your remote server (much more stable, faster, easier than connectbot)
-* easy customizable using ruby
+* easilly customizable using ruby
 
 Together with irc-proxy from forsaken-bots repo you could connect your desktop irc client behind the same login instead of joining the chat with two clients.
