@@ -6,6 +6,7 @@ Together with gtalk client it's one of the most stable and friendly irc clients 
 
 * gtalk is available on almost every mobile os you'd care for
 * gtalk gaurentees delievery of sent/recieved messages
+* gtalk allows you to be connected from multiple devices
 * server side connection prevents irc drops
 * custom shortcuts makes it very nice to type commands
 * run commands on your remote server (much more stable, faster, easier than connectbot)
